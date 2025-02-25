@@ -39,7 +39,10 @@ const onLoad = () => {
     <PullUpLoad
       :loading="loading"
       :finished="finished"
-      :threshold="200"
+      :threshold="80"
+      loading-text="努力加载中..."
+      finished-text="没有更多商品了"
+      pull-text="上拉查看更多商品"
       @load="onLoad"
     >
       <div class="list">

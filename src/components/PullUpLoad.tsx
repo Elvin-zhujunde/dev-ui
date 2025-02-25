@@ -7,6 +7,7 @@ export interface PullUpLoadProps {
   threshold?: number
   loadingText?: string
   finishedText?: string
+  pullText?: string
   onLoad?: () => void
 }
 
@@ -23,7 +24,7 @@ export default defineComponent({
     },
     threshold: {
       type: Number,
-      default: 200
+      default: 80 // 上拉阈值，单位为px
     },
     loadingText: {
       type: String,
@@ -32,66 +33,67 @@ export default defineComponent({
     finishedText: {
       type: String,
       default: '没有更多了'
+    },
+    pullText: {
+      type: String,
+      default: '上拉加载更多'
     }
   },
   emits: ['load'],
   setup(props, { slots, emit }) {
     const root = ref<HTMLDivElement>()
-    let touching = false
+    const pulling = ref(false)
+    const startY = ref(0)
+    const distance = ref(0)
     
-    // 检查是否需要加载更多
-    const check = () => {
-      if (root.value && !touching) {
-        const scrollHeight = document.documentElement.scrollHeight || document.body.scrollHeight
-        const scrollTop = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop
-        const clientHeight = window.innerHeight || document.documentElement.clientHeight
-        
-        if (scrollHeight - scrollTop - clientHeight < props.threshold) {
-          if (!props.loading && !props.finished) {
-            emit('load')
-          }
-        }
-      }
-    }
-
-    // 节流函数
-    const throttle = (fn: Function, delay: number) => {
-      let timer: ReturnType<typeof setTimeout> | null = null
-      return function() {
-        if (!timer) {
-          timer = setTimeout(() => {
-            fn()
-            timer = null
-          }, delay)
-        }
-      }
-    }
-
-    const throttledCheck = throttle(check, 200)
-
     // 触摸事件处理
-    const onTouchStart = () => {
-      touching = true
+    const onTouchStart = (e: TouchEvent) => {
+      if (props.loading || props.finished) return
+      startY.value = e.touches[0].clientY
+      pulling.value = true
+    }
+
+    const onTouchMove = (e: TouchEvent) => {
+      if (!pulling.value) return
+      
+      const currentY = e.touches[0].clientY
+      // 计算向上拉动的距离
+      distance.value = startY.value - currentY
+      
+      // 如果是向下拉，则不处理
+      if (distance.value < 0) {
+        distance.value = 0
+        pulling.value = false
+        return
+      }
     }
 
     const onTouchEnd = () => {
-      touching = false
-      check()
+      if (!pulling.value) return
+      
+      // 如果达到阈值，触发加载
+      if (distance.value >= props.threshold) {
+        emit('load')
+      }
+      
+      // 重置状态
+      pulling.value = false
+      distance.value = 0
     }
 
     onMounted(() => {
-      document.addEventListener('scroll', throttledCheck)
-      if ('ontouchstart' in window) {
-        document.addEventListener('touchstart', onTouchStart)
-        document.addEventListener('touchend', onTouchEnd)
+      if (root.value) {
+        root.value.addEventListener('touchstart', onTouchStart)
+        root.value.addEventListener('touchmove', onTouchMove)
+        root.value.addEventListener('touchend', onTouchEnd)
       }
     })
 
     onBeforeUnmount(() => {
-      document.removeEventListener('scroll', throttledCheck)
-      if ('ontouchstart' in window) {
-        document.removeEventListener('touchstart', onTouchStart)
-        document.removeEventListener('touchend', onTouchEnd)
+      if (root.value) {
+        root.value.removeEventListener('touchstart', onTouchStart)
+        root.value.removeEventListener('touchmove', onTouchMove)
+        root.value.removeEventListener('touchend', onTouchEnd)
       }
     })
 
@@ -106,6 +108,13 @@ export default defineComponent({
             <div class="loading">
               <span class="loading-icon"></span>
               <span class="loading-text">{props.loadingText}</span>
+            </div>
+          )}
+          {!props.loading && !props.finished && (
+            <div class="pulling" style={{ opacity: Math.min(distance.value / props.threshold, 1) }}>
+              <span class="pulling-text">
+                {distance.value >= props.threshold ? '释放立即加载' : props.pullText}
+              </span>
             </div>
           )}
           {props.finished && <div class="finished">{props.finishedText}</div>}

@@ -6,6 +6,10 @@
   padding: 16px;
   text-align: center;
   color: #969799;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .loading {
@@ -27,6 +31,15 @@
 
 .loading-text {
   font-size: 14px;
+}
+
+.pulling {
+  font-size: 14px;
+  transition: opacity 0.3s;
+}
+
+.pulling-text {
+  color: #969799;
 }
 
 .finished {
