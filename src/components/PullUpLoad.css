@@ -1,5 +1,11 @@
 .pull-up-load {
   width: 100%;
+  overflow: hidden;
+}
+
+.pull-up-load__content {
+  width: 100%;
+  will-change: transform;
 }
 
 .pull-up-load__loading {

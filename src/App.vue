@@ -28,6 +28,7 @@ const onLoad = () => {
     }
   }, 1000)
 }
+onLoad()
 </script>
 
 <template>
