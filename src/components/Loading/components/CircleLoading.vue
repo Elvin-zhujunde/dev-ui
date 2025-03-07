@@ -89,5 +89,9 @@ const svgStyle = computed(() => ({
     stroke-dasharray: 1, 175;
     stroke-dashoffset: -175;
   }
+  to{
+    transform: rotate(360deg);
+
+  }
 }
 </style> 
