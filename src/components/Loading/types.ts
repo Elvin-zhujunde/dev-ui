@@ -7,12 +7,10 @@ export interface LoadingProps {
   size?: number | string
   text?: string
   textPosition?: TextPosition
-  
   // 样式配置
   textColor?: string
   loadingColor?: string
   textSize?: number | string
-  
   // 自定义配置
   customIcon?: string // SVG string
 } 

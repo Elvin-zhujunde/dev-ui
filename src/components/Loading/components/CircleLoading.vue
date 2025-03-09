@@ -1,38 +1,26 @@
 <template>
-  <svg 
-    class="circle-loading" 
-    viewBox="0 0 64 64"
-    :style="svgStyle"
-  >
-    <template v-if="customIcon">
-      <g v-html="customIcon"></g>
-    </template>
-    <template v-else>
-      <circle
-        v-for="(d, i) in dots"
-        :key="i"
-        :cx="d[0]"
-        :cy="d[1]"
-        class="loading-dot"
-        :style="{ fill: dotColor }"
-      ></circle>
-      <circle 
-        class="loading-bar"
-        :style="{ stroke: color }"
-      ></circle>
-    </template>
+  <svg class="circle-loading" viewBox="0 0 64 64" :style="svgStyle">
+    <circle
+      v-for="(d, i) in dots"
+      :key="i"
+      :cx="d[0]"
+      :cy="d[1]"
+      class="loading-dot"
+      :style="{ fill: dotColor }"
+    ></circle>
+    <circle class="loading-bar" :style="{ stroke: color }"></circle>
   </svg>
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed } from "vue";
 
 const props = defineProps<{
-  color?: string
-  size?: number | string
-  dotColor?: string
-  customIcon?: string
-}>()
+  color?: string;
+  size?: number | string;
+  dotColor?: string;
+  customIcon?: string;
+}>();
 
 const dots = [
   [60, 32],
@@ -43,12 +31,12 @@ const dots = [
   [12.2, 12.2],
   [32, 4],
   [51.8, 12.2],
-]
+];
 
 const svgStyle = computed(() => ({
-  width: typeof props.size === 'number' ? `${props.size}px` : props.size,
-  height: typeof props.size === 'number' ? `${props.size}px` : props.size,
-}))
+  width: typeof props.size === "number" ? `${props.size}px` : props.size,
+  height: typeof props.size === "number" ? `${props.size}px` : props.size,
+}));
 </script>
 
 <style scoped>
@@ -89,9 +77,8 @@ const svgStyle = computed(() => ({
     stroke-dasharray: 1, 175;
     stroke-dashoffset: -175;
   }
-  to{
+  to {
     transform: rotate(360deg);
-
   }
 }
-</style> 
+</style>

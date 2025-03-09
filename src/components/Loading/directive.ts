@@ -1,5 +1,6 @@
 import { createVNode, render } from "vue";
-import type { VNode, Directive } from "vue";
+import type { Directive, DirectiveBinding } from "vue";
+import type { VNode } from "vue";
 import Loading from "./Loading";
 import type { LoadingProps } from "./types";
 
@@ -73,20 +74,37 @@ export const vLoading: Directive<HTMLElement, boolean> = {
   },
 };
 
-// 导出插件安装函数
+// 为 loading-config 指令定义类型
+interface LoadingConfigDirective extends Directive {
+  mounted(
+    el: HTMLElement,
+    binding: DirectiveBinding<Partial<LoadingProps>>
+  ): void;
+  updated(
+    el: HTMLElement,
+    binding: DirectiveBinding<Partial<LoadingProps>>
+  ): void;
+}
+
 export const LoadingDirective = {
   install(app: any) {
     // 注册 loading 指令
     app.directive("loading", vLoading);
-    
+
     // 注册 loading-config 指令
     app.directive("loading-config", {
-      mounted(el, binding) {
+      mounted(
+        el: HTMLElement,
+        binding: DirectiveBinding<Partial<LoadingProps>>
+      ) {
         (el as any).__loading_config = binding.value;
       },
-      updated(el, binding) {
+      updated(
+        el: HTMLElement,
+        binding: DirectiveBinding<Partial<LoadingProps>>
+      ) {
         (el as any).__loading_config = binding.value;
-      }
-    });
+      },
+    } as LoadingConfigDirective);
   },
 };

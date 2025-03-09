@@ -1,19 +1,15 @@
 import { defineComponent, computed } from 'vue'
 import type { LoadingProps } from './types'
 import CircleLoading from './components/CircleLoading.vue'
+// import SpinLoading from './components/SpinLoading'
 
 // 为每个加载组件定义具体的 props 类型
-type CircleLoadingProps = {
-  color?: string
-  size?: number | string
-  dotColor?: string
-}
-
-type SpinLoadingProps = {
-  color?: string
-  size?: number | string
-  duration?: number
-}
+type LoadingComponents = {
+  [K in LoadingProps['type']]: {
+    component: any;
+    props: Record<string, any>;
+  };
+};
 
 export default defineComponent({
   name: 'Loading',
@@ -63,14 +59,14 @@ export default defineComponent({
 
     // 根据类型获取对应的组件和 props
     const getLoadingComponent = () => {
-      const components = {
+      const components: LoadingComponents = {
         circle: {
           component: CircleLoading,
           props: {
             color: props.loadingColor,
             size: props.size,
-            dotColor: '#dfdfdf'
-          } as CircleLoadingProps
+            dotColor: '#ebedf0'
+          }
         },
         spin: {
           component: null,
@@ -78,11 +74,11 @@ export default defineComponent({
             color: props.loadingColor,
             size: props.size,
             duration: 0.8
-          } as SpinLoadingProps
+          }
         }
       }
 
-      return components[props.type]
+      return components[props.type] || components.circle
     }
 
     return () => {

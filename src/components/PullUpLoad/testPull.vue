@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import PullUpLoad from './components/PullUpLoad'
+import PullUpLoad from './PullUpLoad'
 
 const list = ref<Array<{ id: number; title: string }>>([])
 const loading = ref(false)
